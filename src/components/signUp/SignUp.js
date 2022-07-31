@@ -23,6 +23,7 @@ const getDataFromLS = () => {
 
 function SignUp() {
   const navigate = useNavigate();
+  const [status, setStatus] = useState(false)
 
   const {
     register,
@@ -31,6 +32,10 @@ function SignUp() {
   } = useForm();
 
   const [users, setUsers] = useState(getDataFromLS());
+
+  useEffect(() => {
+    localStorage.setItem("userList", JSON.stringify(users));
+  }, [users]);
 
   const regOnSubmit = (data) => {
     const { name, phone, email, password, confirmPassword } = data;
@@ -58,6 +63,7 @@ function SignUp() {
           icon: "success",
           title: "User registered successfully",
         });
+        setStatus(true);
       }
     } else {
       Toast.fire({
@@ -67,9 +73,11 @@ function SignUp() {
     }
   };
 
-  useEffect(() => {
-    localStorage.setItem("userList", JSON.stringify(users));
-  }, [users]);
+  useEffect(()=>{
+    if(status === true){
+      navigate('/')
+    }
+  },[status])
 
   const handleSignIn = () => {
     navigate("/");

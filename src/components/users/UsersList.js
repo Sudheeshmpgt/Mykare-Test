@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import './scroll.css'
 import { DataGrid } from "@mui/x-data-grid";
 import {
@@ -7,63 +7,70 @@ import {
   Paper,
   TableContainer,
 } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 
 function UsersList() {
+  const navigate = useNavigate();
+  const [users, setUsers] = useState([])
+
+  useEffect(()=>{
+    const token = localStorage.getItem("usertoken")
+    const userDatas = localStorage.getItem("userList")
+    const parsedData = JSON.parse(userDatas)
+    if(!token){
+      navigate('/')
+    }else{
+      setUsers(parsedData)
+    }
+  },[navigate])
   
     const columns = [
       {
         field: "id",
         headerClassName: "super-app-theme--header",
         headerName: "ID",
-        width: 85,
+        width: 90,
       },
       {
         field: "name",
         headerClassName: "super-app-theme--header",
         headerName: "Name",
-        width: 250,
+        width: 290,
         editable: true,
       },
       {
         field: "email",
         headerClassName: "super-app-theme--header",
         headerName: "Email",
-        width: 250,
+        width: 290,
         editable: true,
       },
       {
         field: "phone",
         headerClassName: "super-app-theme--header",
         headerName: "Phone",
-        width: 250,
+        width: 290,
         editable: true,
       },
     ];
   
   
-    // const rows = request.map((data, index) => ({
-    //   id: 1,
-    //   name: "sudheesh",
-    //   email: "ss@gmail.com",
-    //   phone: 1234567890,
-    // }));
-
-    const rows = {
-        id: 1,
-        name: "sudheesh",
-        email: "ss@gmail.com",
-        phone: 1234567890,
-      };
+    const rows = users.map((data, index) => ({
+      id: index + 1,
+      name: data.name,
+      email: data.email,
+      phone: data.phone,
+    }));
   
     return (
       <Grid container>
-        <Box width='100%' sx={{mt:'5%', ml:'auto', mr:'auto'}}> 
+        <Box width='100%' sx={{mt:{sm:'5%', xs:'15%'}, ml:'auto', mr:'auto'}}> 
           <TableContainer
             className="scrollbar-hidden"
             component={Paper}
             style={{
-              width: "65%",
+              width:"75%",
               margin: "20px auto",
               height: 490,
               overflow: "scroll",

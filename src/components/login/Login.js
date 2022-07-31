@@ -13,8 +13,6 @@ import { useForm } from "react-hook-form";
 import Toast from "../sweetalert/SweetAlert";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { login } from "../../redux/userData";
 
 const getDataFromLS = () => {
   const data = localStorage.getItem("userList");
@@ -31,26 +29,34 @@ function Login() {
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const dispatch = useDispatch()
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
-  const [users, setUsers] = useState(getDataFromLS())
+  const [users, setUsers] = useState(getDataFromLS());
+
+  useEffect(() => {
+    const data = localStorage.getItem("userList");
+    const parsedData = JSON.parse(data);
+    setUsers(parsedData);
+  }, []);
 
   const logOnSubmit = (data) => {
     const { email, password } = data;
     if (email && password) {
-      const user = users.filter((data)=>data.email === email && data.password === password);
-      if(user.length !== 0){
+      const user = users.filter(
+        (data) => data.email === email && data.password === password
+      );
+      if (user.length !== 0) {
         const token = user[0].id;
-        localStorage.setItem("usertoken", token)
-        dispatch(login(user[0]))
-        navigate('/dashboard')
-        Toast.fire({ 
+        const userData = JSON.stringify(user[0]);
+        localStorage.setItem("usertoken", token);
+        localStorage.setItem("userData", userData);
+        navigate("/dashboard");
+        Toast.fire({
           icon: "success",
           title: "Login Successfull ",
         });
-      }else{
+      } else {
         Toast.fire({
           icon: "error",
           title: "User not registered",
@@ -65,7 +71,7 @@ function Login() {
   };
 
   const handleJoinNow = () => {
-    navigate("/register")
+    navigate("/register");
   };
 
   return (
@@ -158,7 +164,10 @@ function Login() {
               sx={{ fontSize: { xs: "0.9rem", sm: "1rem" } }}
             >
               don’t have an account?{" "}
-              <Link onClick={handleJoinNow} sx={{ color: "blue", cursor:"pointer" }}>
+              <Link
+                onClick={handleJoinNow}
+                sx={{ color: "blue", cursor: "pointer" }}
+              >
                 Sign Up
               </Link>
             </Typography>

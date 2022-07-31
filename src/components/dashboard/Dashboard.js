@@ -1,18 +1,21 @@
 import { Box, Grid, Typography } from "@mui/material";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
 
 function Dashboard() {
   const navigate = useNavigate();
-  const user = useSelector((state) => state.userData.value);
+  const [user, setUser] = useState({})
 
   useEffect(()=>{
     const token = localStorage.getItem("usertoken")
+    const userData = localStorage.getItem("userData")
+    const parsedData = JSON.parse(userData)
     if(!token){
       navigate('/')
+    }else{
+      setUser(parsedData)
     }
-  },[])
+  },[navigate])
 
   return (
     <Grid container sx={{zIndex:1}}>
@@ -27,7 +30,7 @@ function Dashboard() {
           }}
           sx={{ textShadow: "2px 2px 4px #000000", mt:{sm:'15%', xs:'45%'}}}
         >
-          Welcome to dashboard {user[0].name}
+          Welcome to dashboard {user.name}
         </Typography>
       </Box>
     </Grid>

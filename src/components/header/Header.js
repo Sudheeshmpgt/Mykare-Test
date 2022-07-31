@@ -1,8 +1,6 @@
 import { Box, Button, Container, Toolbar, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { login } from "../../redux/userData";
 
 const getDataFromLS = () => {
   const data = localStorage.getItem("userList");
@@ -16,8 +14,7 @@ const getDataFromLS = () => {
 function Header() {
   const navigate = useNavigate();
   const [users, setUsers] = useState(getDataFromLS());
-  const [token, setToken] = useState("")
-  const dispatch = useDispatch()
+  const [token, setToken] = useState("");
 
   useEffect(() => {
     const data = localStorage.getItem("userList");
@@ -26,23 +23,25 @@ function Header() {
 
     if (admin?.length === 0) {
       let adminUser = {
-        id:"admin101",
+        id: "admin101",
+        name:"Sudheesh",
         email: "admin",
+        phone: 7736288180,
         role: "admin",
         password: "admin",
       };
       setUsers([...users, adminUser]);
     }
-  }, []);
+  }, []); 
 
   useEffect(() => {
     localStorage.setItem("userList", JSON.stringify(users));
   }, [users]);
 
-  useEffect(()=>{
-    const userToken = localStorage.getItem("usertoken") 
-    setToken(userToken)
-  },[])
+  useEffect(() => {
+    const userToken = localStorage.getItem("usertoken");
+    setToken(userToken);
+  }, []);
 
   const handleJoinNow = () => {
     navigate("/register");
@@ -53,10 +52,10 @@ function Header() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("usertoken")
-    dispatch(login(""))
-    navigate('/')
-  }
+    localStorage.removeItem("usertoken");
+    localStorage.removeItem("userData");
+    navigate("/");
+  };
 
   return (
     <Box sx={{ width: "100%", position: "fixed", zIndex: "1" }}>

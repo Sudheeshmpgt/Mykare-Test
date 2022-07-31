@@ -1,26 +1,27 @@
-import React from 'react'
-import Dashboard from '../components/dashboard/Dashboard'
-import BgDesign from '../components/design/BgDesign'
-import Header from '../components/header/Header'
-import UsersList from '../components/users/UsersList'
-import { useSelector } from "react-redux";
+import React, { useEffect, useState } from "react";
+import Dashboard from "../components/dashboard/Dashboard";
+import BgDesign from "../components/design/BgDesign";
+import Header from "../components/header/Header";
+import UsersList from "../components/users/UsersList";
 
 function HomePage() {
-  const user = useSelector((state) => state.userData.value);
-  console.log(user)
+  const [user, setUser] = useState({});
+
+  useEffect(() => {
+    const data = localStorage.getItem("userData");
+    const parsedData = JSON.parse(data);
+    if (data) {
+      setUser(parsedData);
+    }
+  }, []);
+
   return (
     <div>
-        <BgDesign/>
-        <Header/>
-        {
-          user.role === "admin" ? (
-            <UsersList/>
-          ) : (
-            <Dashboard/>
-          )
-        }
+      <BgDesign />
+      <Header />
+      {user.role === "admin" ? <UsersList /> : <Dashboard />}
     </div>
-  )
+  );
 }
 
-export default HomePage
+export default HomePage;

@@ -5,22 +5,12 @@ import App from "./App";
 import { BrowserRouter } from "react-router-dom";
 import { Theme } from "./theme";
 import { ThemeProvider } from "@mui/material/styles";
-import { Provider } from "react-redux";
-import store from "../src/redux/store";
-import { persistStore } from "redux-persist";
-import { PersistGate } from "redux-persist/integration/react";
-
-const persistor = persistStore(store);
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <BrowserRouter>
-    <Provider store={store}>
-      <PersistGate persistor={persistor}>
         <ThemeProvider theme={Theme}>
           <App />
         </ThemeProvider>
-      </PersistGate>
-    </Provider>
   </BrowserRouter>
 );
