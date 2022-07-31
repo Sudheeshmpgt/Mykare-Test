@@ -8,11 +8,22 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import Toast from "../sweetalert/SweetAlert";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { login } from "../../redux/userData";
+
+const getDataFromLS = () => {
+  const data = localStorage.getItem("userList");
+  if (data) {
+    return JSON.parse(data);
+  } else {
+    return [];
+  }
+};
 
 function Login() {
   const {
@@ -20,15 +31,35 @@ function Login() {
     handleSubmit,
     formState: { errors },
   } = useForm();
+  const dispatch = useDispatch()
+
   const navigate = useNavigate()
+
+  const [users, setUsers] = useState(getDataFromLS())
 
   const logOnSubmit = (data) => {
     const { email, password } = data;
     if (email && password) {
+      const user = users.filter((data)=>data.email === email && data.password === password);
+      if(user.length !== 0){
+        const token = user[0].id;
+        localStorage.setItem("usertoken", token)
+        dispatch(login(user[0]))
+        navigate('/dashboard')
+        Toast.fire({ 
+          icon: "success",
+          title: "Login Successfull ",
+        });
+      }else{
+        Toast.fire({
+          icon: "error",
+          title: "User not registered",
+        });
+      }
     } else {
       Toast.fire({
         icon: "warning",
-        title: "Invalid user",
+        title: "Fill all the details",
       });
     }
   };
@@ -75,13 +106,9 @@ function Login() {
             <form onSubmit={handleSubmit(logOnSubmit)} autoComplete="off">
               <TextField
                 name="email"
-                type="email"
+                type="text"
                 {...register("email", {
                   required: "This field is required",
-                  pattern: {
-                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                    message: "Please enter a valid email",
-                  },
                 })}
                 error={!!errors?.email}
                 helperText={errors?.email ? errors.email.message : null}

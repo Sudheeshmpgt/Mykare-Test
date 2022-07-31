@@ -7,26 +7,58 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import Toast from "../sweetalert/SweetAlert";
 
+const getDataFromLS = () => {
+  const data = localStorage.getItem("userList");
+  if (data) {
+    return JSON.parse(data);
+  } else {
+    return [];
+  }
+};
+
 function SignUp() {
   const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
 
+  const [users, setUsers] = useState(getDataFromLS());
+
   const regOnSubmit = (data) => {
     const { name, phone, email, password, confirmPassword } = data;
     if (name && phone && email && password && password === confirmPassword) {
-      Toast.fire({
-        icon: "success",
-        title: "",
-      });
+      const user = users?.filter(
+        (data) => data.email === email || data.phone === phone
+      );
+      if (user.length !== 0) {
+        Toast.fire({
+          icon: "error",
+          title: "User already exists",
+        });
+      } else {
+        const id = Math.random().toString(36).slice(2);
+        const newUser = {
+          id,
+          role: "user",
+          name,
+          phone,
+          email,
+          password,
+        };
+        setUsers([...users, newUser]);
+        Toast.fire({
+          icon: "success",
+          title: "User registered successfully",
+        });
+      }
     } else {
       Toast.fire({
         icon: "error",
@@ -34,6 +66,10 @@ function SignUp() {
       });
     }
   };
+
+  useEffect(() => {
+    localStorage.setItem("userList", JSON.stringify(users));
+  }, [users]);
 
   const handleSignIn = () => {
     navigate("/");

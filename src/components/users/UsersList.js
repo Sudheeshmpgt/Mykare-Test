@@ -1,24 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import './scroll.css'
 import { DataGrid } from "@mui/x-data-grid";
 import {
   Box,
   Grid,
-  IconButton,
   Paper,
   TableContainer,
-  Typography,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
-import CloseIcon from "@mui/icons-material/Close";
-import Toast from "../sweetalert/SweetAlert";
 
 
 function UsersList() {
-   
-    const handleCloseClick = () => {
-    //   navigate("/home");
-    };
   
     const columns = [
       {

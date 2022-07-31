@@ -1,25 +1,62 @@
-import {
-  Box,
-  Button,
-  Container,
-  Toolbar,
-  Typography,
-} from "@mui/material";
-import React from "react";
-import {useNavigate} from 'react-router-dom'
+import { Box, Button, Container, Toolbar, Typography } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { login } from "../../redux/userData";
+
+const getDataFromLS = () => {
+  const data = localStorage.getItem("userList");
+  if (data) {
+    return JSON.parse(data);
+  } else {
+    return [];
+  }
+};
 
 function Header() {
   const navigate = useNavigate();
+  const [users, setUsers] = useState(getDataFromLS());
+  const [token, setToken] = useState("")
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    const data = localStorage.getItem("userList");
+    const adminData = JSON.parse(data);
+    const admin = adminData?.filter((data) => data.email === "admin");
+
+    if (admin?.length === 0) {
+      let adminUser = {
+        id:"admin101",
+        email: "admin",
+        role: "admin",
+        password: "admin",
+      };
+      setUsers([...users, adminUser]);
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("userList", JSON.stringify(users));
+  }, [users]);
+
+  useEffect(()=>{
+    const userToken = localStorage.getItem("usertoken") 
+    setToken(userToken)
+  },[])
 
   const handleJoinNow = () => {
-    navigate("/register")
+    navigate("/register");
   };
 
   const handleSignIn = () => {
-    navigate("/")
-  }; 
+    navigate("/");
+  };
 
-  let token;
+  const handleLogout = () => {
+    localStorage.removeItem("usertoken")
+    dispatch(login(""))
+    navigate('/')
+  }
 
   return (
     <Box sx={{ width: "100%", position: "fixed", zIndex: "1" }}>
@@ -104,11 +141,11 @@ function Header() {
                 </Button>
               </Box>
             ) : (
-                <Button
+              <Button
                 variant="contained"
                 color="secondary"
                 size="small"
-                onClick={handleSignIn}
+                onClick={handleLogout}
                 sx={{
                   ml: 2,
                   color: "text.primary",
