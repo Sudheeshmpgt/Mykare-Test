@@ -1,12 +1,14 @@
 import React from 'react'
 import BgDesign from '../components/design/BgDesign'
 import Header from '../components/header/Header'
+import Login from '../components/login/Login'
 
 function LoginPage() {
   return (
     <div>
         <BgDesign/>
         <Header/>
+        <Login/>
     </div>
   )
 }
